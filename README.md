@@ -63,21 +63,15 @@ We can define global variables with `DEFPARAMETER` and `DEFVAR`. `DEFPARAMETER` 
 
 ## Global Functions
 `DEFUN` - define global functions.
-
 ```lisp
-
 (defun function-name (parameter*)
   "Optional documentation string."
   body-form*)
 ```
 
-
 <a id="orgaf86fa8"></a>
-
 ## Assignment
-
 `SETF` - assignment operator. Places are typically either symbols, representing variables or functions, or getter forms that access particular places in objects that we wish to modify.
-
 ```lisp
 (setf place value)
 
@@ -90,11 +84,9 @@ We can define global variables with `DEFPARAMETER` and `DEFVAR`. `DEFPARAMETER` 
 *list* ;; Returns (5 2 3 4)
 ```
 
-
 <a id="orgd660dc0"></a>
 
 ## Input & Output
-
 The LISP reader consists of three primary functions
 -  `READ` is used to parse input into Lisp objects and reads exactly one expression, regardless of newlines
 -  `READ-LINE` reads all characters up to a newline, returning a string
@@ -117,10 +109,13 @@ The most useful LISP printing functions are:
 (format destination control-string optional-arguments*) ;; syntax of format
 ```
 
-The first argument of the `FORMAT` function is the destination where the output will be printed.
-
--   A value of `T` will send the out to the stream `*​STANDARD-OUTPUT​*` (typically the main screen of your LISP system) whilst `NIL` here will return the output as a string. We can also supply a stream here
--   The second argument is the string that we want to print. However, we can enter directives (preceded by `~`) to add complex behaviour to the string, such as
+The first argument of `FORMAT` is the destination of the output
+Arguments
+1. Destination of the output:
+   * `T` -> stream `*​STANDARD-OUTPUT​*` (typically the main screen of your LISP system),
+   * `NIL` -> return the output as a string,
+   * `stream-name` -> that stream
+2. The string we want to print. Added complex behaviour:
     -   `~%` to print newlines
     -   `~A` to print LISP objects for humans
     -   `~S` to print LISP objects for computers, i.e. suitable as as input for the LISP reader
@@ -135,32 +130,20 @@ This is best illustrated by the following examples. Note how Bob is quoted in th
 (format nil "~A ~A" "Number is:" (+ 1 2)) ;; Returns "Number is: 3" (a string)
 ```
 
-
 <a id="org14d1d98"></a>
-
 ## Numerical Functions
 Basic numerical functions include `+`, `*`, `-`, `/`. They can take more than two operands.
+Numerical comparisons can be achieved with `=`, `/=`, `>`, `<`, `>=` and `<=`. With three or more arguments, these functions act as range checks.
+
 ```lisp
 (+ 4 7 9) ;; 20
-```
 
-Numerical comparisons can be achieved with `=`, `/=`, `>`, `<`, `>=` and `<=`. With three or more arguments, these functions act as range checks.
-For example, the below returns true as X is between 0 and 5 inclusive.
-
-```lisp
 (defparameter x 5)
-(<= 0 x 5)
-```
+(<= 0 x 5) ;; T
 
-The below returns false as X > Y:
-```lisp
 (defparameter y 4)
-(< 0 x y 6)
-```
-
-The below returns true as Y < X < 6:
-```lisp
-(< 0 y x 6)
+(< 0 x y 6) ;; NIL, because X > Y
+(< 0 y x 6) ;; T, because  Y < X < 6
 ```
 
 Other useful numerical functions are below.
@@ -173,24 +156,19 @@ Other useful numerical functions are below.
 (min 1 -1 2 3 4) ;; -1
 (abs -3) ;; 3
 ```
-
-More details on numerical operations: [Common Lisp, the Language 2nd Edition](https://www.cs.cmu.edu/Groups/AI/html/cltl/clm/node121.html).
+[More on numerical operations](https://www.cs.cmu.edu/Groups/AI/html/cltl/clm/node121.html).
 
 
 <a id="org509a49b"></a>
 
 ## Text Functions
-`CONCATENATE` concatenates strings:
+`CONCATENATE` concatenates strings.
+`LENGTH` returns the number of characters in a string:
+`SEARCH` will search for a substring within a string.
+
 ```lisp
 (concatenate 'string "Hello, " "world" ". Today is good.")
-```
-
-`LENGTH` returns the number of characters in a string:
-```lisp
 (length "Common") ;; Returns 6
-```
-`SEARCH` will search for a substring within a string.
-```lisp
 (search "term" "the term is search within this string") ;; Returns 4, the starting position of the first string within the second string
 ```
 
@@ -207,62 +185,49 @@ Below are comparison functions for strings. Replace STRING with CHAR in the belo
 
 <a id="orgbb85d6f"></a>
 # Logic & Equality
-
 <a id="org3d5c207"></a>
-
 ## Type Predicates
-LISP objects can belong to multiple data types. Test whether an object is of a particular type with `TYPEP`.
-
+Objects can belong to multiple data types. Test whether an object is of a particular type with `TYPEP`.
 ```lisp
 (typep "My String" 'string) ;; T
 ```
-
-Other type predicate functions include ATOM, NULL, ZEROP, NUMBERP, EVENP, LISTP, ARRAYP, PLUSP, CHARACTERP, ODDP, SYMBOLP, PACKAGEP, MINUSP, STRINGP and ODDP.
+Other type predicate functions include `ATOM`, `NULL`, `ZEROP`, `NUMBERP`, `EVENP`, `LISTP`, `ARRAYP`, `PLUSP`, `CHARACTERP`, `ODDP`, `SYMBOLP`, `PACKAGEP`, `MINUSP`, `STRINGP` and `ODDP`.
 
 
 <a id="org2ea5239"></a>
-
 ## Boolean & Logic
+Falsity - `NIL`, all other values - `T`.
 
-Falsity is represted by `NIL` and all other values represent truth.
-
-The function `AND` returns `NIL` if any of its arguments are false and returns the value of the last argument if all arguments are true. The below will return 5 as all the arguments are true:
-
-```lisp
-
-(and t (+ 1 2) (* 1 5))
-
-```
-
-The function `OR` returns the first argument that is true and `NIL` if no argument is true. The below returns 3, the first non-nil value in the form:
+`AND` returns `NIL` if any of its arguments are false, the value of the last argument if all arguments are true.
+`OR` returns the first argument that is true and `NIL` if no argument is true.
 
 ```lisp
-(or nil (+ 1 2) (* 1 5))
+(and t (+ 1 2) (* 1 5)) ;; 5, all args are true
+(or nil (+ 1 2) (* 1 5)) ;; 3, first non-nil value
 ```
 
 
 <a id="org95cc4a3"></a>
 
 ## Equality
-Common Lisp has a few functions for testing equality of two objects. Generally speaking, you can't go wrong with `EQUAL`
+CL has a few functions for testing equality of two objects. Generally, you can't go wrong with `EQUAL`
 -   `EQ` compares equality of memory addresses and is the fastest test. It is useful to compare symbols quickly and to test whether two cons cells are physically the same object. It should not be used to compare numbers
--   `EQL` is like `EQ` except that it can safely compare numbers for numerical equality and type equality. It is the default equality test in many Common Lisp functions
--   `EQUAL` is a general purpose test that, in addition to being able to safely compare numbers like `EQL`, can safely compare lists on an element by element basis. Lists are not unique and `EQ` and `EQL` will fail to return equality on equivalent lists if they are stored in different memory addresses
--   `EQUALP` is a more liberal version of `EQUAL`. It ignores case distinctions in strings, among other things
--   `=` is the most efficient way to compare numbers, and the only way to compare numbers of disparate types, such as 3 and 3.0. It only accepts numbers
+-   `EQL` - like `EQ`, but it can safely compare numbers for numerical equality and type equality. It is the default equality test in many Common Lisp functions
+-   `EQUAL` in addition to being able to safely compare numbers like `EQL`, can safely compare lists on an element by element basis. Lists are not unique and `EQ` and `EQL` will fail to return equality on equivalent lists if they are stored in different memory addresses
+-   `EQUALP` - a more liberal version of `EQUAL`. It ignores case distinctions in strings, among other things
+-   `=` - the most efficient way to compare numbers, the only way to compare numbers of different types (3 and 3.0), only accepts numbers.
 
 
 <a id="orgf591e22"></a>
 
 ## Blocks
-
-`PROGN` allows multiple forms to be evaluated and the value of the last is returned as the value of the `PROGN`. The below will print "Hello" and "World" and return 10:
+`PROGN` allows multiple forms to be evaluated and the value of the last is returned as the value of the `PROGN`.
 
 ```lisp
 (progn
   (print "Hello")
   (print "World")
-  (+ 5 5))
+  (+ 5 5)) ;; will print "Hello" and "World" and return 10
 ```
 
 `BLOCK` is similar, but it is named and has a mechanism for out-of-order exit with the `RETURN-FROM` operator.
@@ -292,17 +257,13 @@ The below constructs a block named MY-BLOCK and returns 10 as it returns from th
 ## Conditionals
 The five main conditionals are `IF`, `WHEN`, `UNLESS`, `COND` and `CASE`.
 
+`IF` - has an 'else' clause, NO implicit `PROGN`
+`WHEN` - no 'else', implicit `PROGN`
 
-`IF` - NO implicit `PROGN`
 ```lisp
 (if (equal 5 (+ 1 4)) ;; note there is no implicit 'progn'
     (print "This is true")
     (print "This if false"))
-```
-
-`WHEN` - implicit `PROGN`
-
-```lisp
 
 (when (equal 5 (+ 1 4))
   (print "Print if statement is true")
@@ -310,18 +271,15 @@ The five main conditionals are `IF`, `WHEN`, `UNLESS`, `COND` and `CASE`.
 
 ```
 
-`UNLESS` - implicit `PROGN`):
+`UNLESS` - implicit `PROGN`
+`COND` - multiple ifs, implicit `PROGN`. The form exits on the first true.
+
 
 ```lisp
 
 (unless (equal 3 (+ 1 4))
   (print "Only print if condition is false")
   (print "Print this also"))
-
-```
-
-`COND` - multiple ifs, implicit `PROGN`. The form exits on the first true:
-```lisp
 
 (cond ((equal 5 3) (print "This will not print"))
       ((equal 5 5) (print "This will print"))
@@ -330,9 +288,7 @@ The five main conditionals are `IF`, `WHEN`, `UNLESS`, `COND` and `CASE`.
        (print "form exited at first true")))
 
 ```
-
-Example of a `CASE` form (multiple ifs on one variable, implicit `PROGN`). Cases are literal and not evaluated. The form exits on the first true:
-
+`CASE` (multiple ifs on one variable, implicit `PROGN`). Cases are literal and not evaluated.
 ```lisp
 (case (read)
   (1 (format t "~% Monday"))
@@ -342,7 +298,7 @@ Example of a `CASE` form (multiple ifs on one variable, implicit `PROGN`). Cases
   (5 (format t "~% Friday"))
   (6 (format t "~% Saturday"))
   (7 (format t "~% Sunday"))
-  (otherwise "Not an integer between 1 and 7"))
+  (otherwise "Not an integer between 1 and 7")) ;; exits on the first true
 ```
 
 
@@ -353,6 +309,7 @@ Example of a `CASE` form (multiple ifs on one variable, implicit `PROGN`). Cases
 
 ## Basic Looping
 `DOLIST` will iterate over the items of a list and execute the loop body for each item of the list.
+`DOTIMES` iterates from 0 to one less than the end number. If an optional result form is supplied, it will be evaluated at the end of the loop.
 
 ```lisp
 (dolist (my-variable my-list optional-result-form)
@@ -360,11 +317,7 @@ Example of a `CASE` form (multiple ifs on one variable, implicit `PROGN`). Cases
 
 (dolist (i '(1 2 3 5 6 7)) ;; prints numbers 1 to 7
   (print i))
-```
 
-`DOTIMES` iterates from 0 to one less than the end number. If an optional result form is supplied, it will be evaluated at the end of the loop.
-
-```lisp
 (dotimes (my-variable end-number optional-result-form)
   body-form*)
 
@@ -374,8 +327,7 @@ Example of a `CASE` form (multiple ifs on one variable, implicit `PROGN`). Cases
 
 <a id="org83b693d"></a>
 ## Advanced Looping
-Below is the syntax of the `DO` macro.
-
+`DO` macro
 ```lisp
 
 (do ((var1 init1 step1)
@@ -384,112 +336,59 @@ Below is the syntax of the `DO` macro.
     (end-test result-forms*)
   body-forms*)
 
-```
-
-The below example will return 81 and print 1, 0, 1, 4, 9, 16, 25, 36, 49 and 64 on newlines. During each iteration, LOOP-STEP is increased by one and SQUARE is set to the square of LOOP-STEP:
-
-```lisp
+;; Returns 81 and print 1, 0, 1, 4, 9, 16, 25, 36, 49 and 64 on newlines. 
+;; During each iteration, LOOP-STEP is increased by one and SQUARE is set to the square of LOOP-STEP:
 
 (do ((loop-step 0 (+ loop-step 1))
      (square 1 (* loop-step loop-step)))
     ((= 10 loop-step) square) ; Stop at 10
   (print square)) ; Print square at each step
-
 ```
 
-Below are examples of the `LOOP` macro, some from [Peter D. Karp's Guide](http://www.ai.sri.com/pkarp/loop.html). The first will return a list of the doubles of each number in the original list:
+`LOOP` macro, some from [Peter D. Karp's Guide](http://www.ai.sri.com/pkarp/loop.html)
 
 ```lisp
-
 (defvar my-list-1 '(1 2 3 4 5 6))
 
-;; Returns (2 4 6 8 10 12)
-
-(loop for x in my-list-1
+(loop for x in my-list-1  ;; Returns (2 4 6 8 10 12)
       collect (+ x x))
 
-```
-
-The below will print each of the numbers in the list iteratively:
-
-```lisp
-
-(loop for x in my-list-1
-       do (print x))
-
-```
-
-The below will only collect even numbers:
-
-```lisp
-
-(loop for x in my-list-1
+(loop for x in my-list-1 ;; will only collect even numbers
       if (evenp x)
       collect x)
 
-```
-
-The below is an example of iterating across two lists, stopping the loop at the end of the shorter list:
-
-```lisp
-
 (defvar my-list-2 '(a b c d e))
+
+;; Double iteration
+
 (loop for x in my-list-1
       for y in my-list-2
-      do (format t "X: ~a, Y: ~a, " x y))
+      do (format t "X: ~a, Y: ~a, " x y)) ;; the loop will stop at the end of the shorter list
 
-```
 
-We can also do simple loops with a counter:
-
-```lisp
+;; Simpler loops 
 (loop for x from 1 to 5
        do (print x))
-```
 
-Below is an example of how we can use the `LOOP` macro to check whether a certain predicate is true at some point within a list:
-
-```lisp
 (loop for x in '(abc 2) 
-      thereis (numberp x))
-```
+	thereis (numberp x)) ;; check whether a predicate is true at some point
+	;; never (numberp x)) ;; a predicate is never true	
+	;; always (numberp x)) ;; always true
 
-We can also check whether a predicate is never true within a loop:
 
-```lisp
-(loop for x in '(abc 2) 
-      never (numberp x))
-
-```
-
-We can also check whether a predicate is always true within a loop:
-
-```lisp
-(loop for x in '(abc 2)
-	always (numberp x))
-```
-Below is an example of terminating a loop early:
-
-```lisp
+;; Terminating a loop early
 (loop for x from 1
       for y = (* x 10)
       while (< y 100)
       do (print (* x 5))
       collect y)
-```
 
-Finally, a few more examples illustrating the versatility of the `LOOP` macro:
 
-```common-lisp
+;; Other examples
 (loop for x in '(a b c d e 1 2 3 4)
       until (numberp x)
       do
       collect (list x 'abc))
-
-(loop for x in '(a b c d e)
-      for y from 1
-      when (> y 1) do (format t ", ")
-      do (format t "~A" x))
 
 (loop for x in '(a b c d e)
     for y from 1
@@ -507,7 +406,7 @@ Finally, a few more examples illustrating the versatility of the `LOOP` macro:
 
 ## Local Variables
 
-`LET` and `LET*` allow us to create local variables that can only be accessed within their closures. 
+`LET` and `LET*` - create local variables that can only be accessed within their closures. 
 `LET` binds in parallel - you cannot refer to another variable in the `LET` form when setting the value of another. 
 `LET*` binds in sequentially - you can refer to the value of any previously bound variables. This is useful when you want to assign names to several intermediate steps in a long computation.
 
@@ -517,7 +416,6 @@ Finally, a few more examples illustrating the versatility of the `LOOP` macro:
       ...
       (var-n value-n))
   body-form*)
-
 
 ;; Prints 10
 (let* ((x 5)
@@ -531,8 +429,7 @@ Finally, a few more examples illustrating the versatility of the `LOOP` macro:
 
 ## Local Functions
 
-`DEFUN` functions are global functions and can be accessed anywhere. 
-We can define local functions `LABELS`, which are only accessible within their context.
+`LABELS` - local functions only accessible within their context, similar to `DEFUN`
 ```lisp
 (labels ((fn-1 args-1 body-1)
 	 ...
@@ -540,7 +437,7 @@ We can define local functions `LABELS`, which are only accessible within their c
   body-form*)
 ```
 
-They take a similar format to a `DEFUN` form. Within the body of the `LABELS` form, function names matching those defined by the `LABELS` refer to the locally defined functions rather than any global functions with the same names.
+Within the body of the `LABELS` form, function names matching those defined by the `LABELS` refer to the locally defined functions rather than any global functions with the same names.
 
 Below is an example of a `LABELS` form that will return 12, the result of (+ 2 4 6), where 2, 4 and 6 are the results of evaluating the three local functions defined in the form.
 
@@ -560,13 +457,11 @@ Below is an example of a `LABELS` form that will return 12, the result of (+ 2 4
 ## Lambda Expressions
 
 Lambda expressions allow us to create unnamed functions. These are useful when writing small functions for certain tasks. Below is an example that returns 101:
-
 ```lisp
 ((lambda (x)
    (+ x 100))
  1)
 ```
-
 
 <a id="org7a4f5d3"></a>
 ## Function Parameters
@@ -574,7 +469,6 @@ By default, a function call must supply values for all parameters that feature i
 
 The `&optional` token allows us to distinguish between required parameters, placed before the `&optional` token, and optional parameters, placed after the token:
 ```lisp
-
 (defun make-a-list (a b c d &optional e f g)
   (list a b c d e f g))
 
@@ -596,11 +490,9 @@ In general, `&key` is preferable to `&optional` as it allows us to have greater 
 Finally, the `&rest` token, placed before the last variable in a parameter list, allows us to write functions that can accept an unknown number of arguments. The last variable will be set to a list of all the remaining arguments supplied by the function call:
 
 ```lisp
-
 (defun make-a-list-3 (a b c d &rest e) (list a b c d e))
 
 (make-a-list-3 1 2 3 4 5 6 7 8) ; (1 2 3 4 (5 6 7 8))
-
 ```
 
 We can utilise multiple tokens in the same function call, as long as we declare them in order:
@@ -615,51 +507,42 @@ We can utilise multiple tokens in the same function call, as long as we declare 
 
 ## Multiple Values
 
-The `VALUES` function returns multiple values and can be used as the last expression in the body of a function.
+`VALUES` - returns multiple values, can be used as the last expression in the body of a function.
+If the function is supplied as an argument to a form which is only expecting one value, the first returned value is used.
 
 ```lisp
 (values 1 nil (+ 2 4)) ;; returns 1, NIL and 6
-```
 
-If a `VALUES` function is supplied as an argument to a form which is only expecting one value, the first value returned by the `VALUES` function is used and the rest are discarded:
-
-```lisp
 (+ 5 (values 1 nil (+ 2 4))) ;; Returns 6
 ```
 
-The `MULTIPLE-VALUE-BIND` macro is used to receive multiple values. The first argument of this macro is a list of parameters and the second is an expression whose values are bound to the parameters. We can then use these bindings in the body of the `MULTIPLE-VALUE-BIND` macro.
+`MULTIPLE-VALUE-BIND` macro receives multiple values. The arguments are
+- a list of parameters
+- an expression whose values are bound to the parameters.
+We can then use these bindings in the body of the `MULTIPLE-VALUE-BIND` macro.
 
 ```lisp
 (multiple-value-bind (x y z) (values 1 2 3) ;; Returns (1 2 3)
    (list x y z)) 
 ```
-
 If there are more variables than values, the leftover variables will be bound to NIL. If there are more values than variables, the extra values will be discarded.
 
 
 <a id="orgc982106"></a>
 
 ## Apply & Funcall
+Functions are first-class objects that support all operations available to other data objects (being modified, passed as an argument, returned from a function, being assigned to a variable).
 
-Functions in LISP are first-class objects that generally support all operations available to other data objects, such as being modified, passed as an argument, returned from a function and being assigned to a variable.
+`FUNCTION` (shorthand `#'`) - returns the function object associated with the name of function that is supplied as an argument:
+`APPLY` takes a function and a list of arguments for it and returns the result of applying the function to its arguments.
+Note how we have to use `#'` to pass the `+` function as an object into the `APPLY` function. Without doing so, LISP will return an error as it will try to evaluate `+`, which is not legally permissible in the below example.
+ `FUNCALL` - similar to `APPLY`, but allows us to pass arguments individually and not as a list.
 
-The `FUNCTION` special operator (shorthand `#'`) returns the function object associated with the name of function that is supplied as an argument:
 
 ```lisp
-
 (function +)
 
-;; Equivalent syntax
-
-#'+
-
-```
-
-`APPLY` takes a function and a list of arguments for it and returns the result of applying the function to its arguments.
-
-Note how we have to use to sharp-quote `#'` to pass the `+` function as an object into the `APPLY` function. Without doing so, LISP will return an error as it will try to evaluate `+`, which is not legally permissible in the below example.
-
-```lisp
+#'+ ;; equivalent syntax
 
 (apply #'+ '(1 2 3)) ;; returns 6
 
@@ -668,16 +551,12 @@ Note how we have to use to sharp-quote `#'` to pass the `+` function as an objec
 	   (+ a b c))
        '(1 2 3))
 
-```
- `FUNCALL` - similar to `APPLY`, but allows us to pass arguments individually and not as a list.
-```lisp
 (funcall #'+ 1 2 3) ;; 6
 ```
 
 <a id="orgc1e2096"></a>
 
 ## Mapping Functions
-
 Mapping is a type of iteration in which a function is successively applied to pieces of one or more sequences.
 
 `MAPCAR` operates on successive elements of lists and returns a list of the result of the successive calls to the function specified. 
@@ -755,7 +634,6 @@ We can also specify the test to apply (the default is `EQL`):
 (reduce #'intersection '((b r a d) (b a d) (c a t))) ;; returns (A), the intersection of these three lists
 ```
 
-
 <a id="orgc1be892"></a>
 
 ## Push, Pop & Reverse
@@ -786,31 +664,24 @@ Association lists are very useful for mapping values to keys. They are lists of 
 (defvar my-a-list '((one . 1) (two . 2)))
 ```
 
-Below is an example of returning a new association list by adding an entry to the front of a pre-existing association list:
+Returning a new association list by adding an entry to the front of a pre-existing association list:
 
 ```lisp
 (acons 'three 3 my-a-list) ;; Returns ((THREE . 3) (ONE . 1) (TWO . 2))
-```
 
-Below is an example of creating an association list from lists of keys & datums:
-
-```lisp
+;; Creating an association list from lists of keys & datums:
 (pairlis '(one two three) '(1 2 3))
 ```
 
 `ASSOC` - retrieve the pair associated with a key.
 `RASSOC` - retrieve the pair associated with a datum (value).
-
 ```lisp
 (assoc 'one my-a-list) ;; (ONE . 1)
 (rassoc 2 my-a-list :test #'=) ;; (TWO . 2)
 ```
 
-
 <a id="org4faae7d"></a>
-
 # More on Sequences
-
 Sequences are a data type and lists, strings, arrays are all of type sequence.
 
 
@@ -819,79 +690,58 @@ Sequences are a data type and lists, strings, arrays are all of type sequence.
 ## Arrays
 
 `MAKE-ARRAY` creates arrays
+`AREF` and `SETF` - access elements and set their values
+`:INITIAL-ELEMENT` - set the value of every element of an array to the provided argument.
+`ARRAY-RANK` and `ARRAY-DIMENSION` - retrieve the the number of dimensions and the number of elements in a given dimension respectively:
+`:INITIAL-CONTENTS` is used to set the array to an object provided.
+
 
 ```lisp
 (defparameter my-array ;; create a 2x3 array
   (make-array '(2 3) :initial-element nil))
-```
 
-`AREF` and `SETF` - access elements and set their values
-
-```lisp
 (aref my-array 0 0) ;; NIL (value has not been set)
 
 (setf (aref my-array 0 0) 'b) ;; set the value to B
 
 (aref my-array 0 0) ;; B
-```
 
-`:INITIAL-ELEMENT` - set the value of every element of an array to the provided argument.
-
-```lisp
 (setf my-array ;; set every element to 2
        (make-array '(2 3)
 		   :initial-element '((1 2 3) (1 2 3))))
-```
 
-`ARRAY-RANK` and `ARRAY-DIMENSION` - retrieve the the number of dimensions and the number of elements in a given dimension respectively:
-
-```lisp
 (array-rank my-array)) ;; Returns 2
 (array-dimension my-array 0) ;; Returns 2
 (array-dimension my-array 1) ;; Returns 3
-```
 
-`:INITIAL-CONTENTS` is used to set the array to an object provided.
-```lisp
 (defparameter my-vector
   (make-array 3 :initial-contents '("a" 'b 3)))
 ```
-
-A one-dimensional array is also known as a vector and the above example created one. Vectors can also be created with `VECTOR`:
+`VECTOR` - a one-dimensional array (e.g. strings are specialised vectors whose elements are characters), the above example created one, but also: 
 ```lisp
 (vector "a" 'b 3)
 ```
 
-The most famous vectors in LISP are strings. Strings are specialised vectors whose elements are characters.
-
 <a id="org469c85e"></a>
 
 ## Sequence Functions
-
-Sequences have many useful functions. We can use `LENGTH` to return the number of items in a sequence. 
-
-```lisp
-(length '(a b c d e f)) ;; Returns 6
-```
-
+`LENGTH` - return the number of items in a sequence. 
 `REMOVE` and variants - handy filter functions.
-```lisp
-(remove 'a '(c a r a t)) ;; Returns (C R T) as a new list
-(remove-duplicates "abracadabra") ;; Returns "cdbra", preserving only the last duplicate of each item
-(remove-if #'oddp '(1 2 3 4 4)) ;; (2 4 4)
-```
-
 `SUBSEQ` - extract a portion of a sequence. Its arguments are a list, the starting position and an optional ending position (which is not to be included in the subsequence).
 `SORT` takes a sequence and a comparison function of two arguments and destructively returns a sequence sorted according to the function.
-
-```lisp
-(subseq '(a b c d e f) 1 4) ;; (B C D)
-(sort (list 1 4 2 5 6) #'>) ;; (6 5 4 2 1) - sorting in descending order
-```
-
 `EVERY` and `SOME` test whether a sequence satisfies a provided predicate.
 
 ```lisp
+(length '(a b c d e f)) ;; Returns 6
+
+(remove 'a '(c a r a t)) ;; Returns (C R T) as a new list
+(remove-duplicates "abracadabra") ;; Returns "cdbra", preserving only the last duplicate of each item
+(remove-if #'oddp '(1 2 3 4 4)) ;; (2 4 4)
+
+(subseq '(a b c d e f) 1 4) ;; (B C D)
+
+(sort (list 1 4 2 5 6) #'>) ;; (6 5 4 2 1) - sorting in descending order
+
 (every #'oddp '( 1 2 5)) ;; NIL (not every item is odd)
 (some #'oddp '( 1 2 5)) ;; T (some of the items are odd)
 (every #'> '(1 3 5) '(0 2 4)) ;; T (in an element-wise comparison, items from the firt sequence are greater than those of the second sequence)
@@ -929,7 +779,6 @@ Many list and sequence functions take one or more keyword arguments from the bel
 <a id="org94ffa30"></a>
 # Data Structures
 
-
 <a id="orgb7bdb2a"></a>
 ## Hash Tables
 The objects stored in a hash table or used as keys can be of any type. Hash tables can accommodate any number of elements, because they are expanded when they run out of space.
@@ -946,10 +795,7 @@ The objects stored in a hash table or used as keys can be of any type. Hash tabl
 (remhash 'color my-hash-table)
 ```
 
-The function `MAPHASH` allows you to iterate over all entries in the hash table.
-
--   Its first argument must be a function which accepts two arguments, the key and the value of each entry
--   Note that due to the nature of hash tables you can't control the order in which the entries are provided to `MAPHASH` (or other traversing constructs)
+ `MAPHASH` - iterate over all entries in the hash table (not in order). Its first argument: function which accepts two arguments, the key and the value of each entry
 
 ```lisp
 (maphash #'(lambda (key value)
@@ -959,7 +805,6 @@ The function `MAPHASH` allows you to iterate over all entries in the hash table.
 
 
 <a id="orge20b38c"></a>
-
 ## Structures
 Common Lisp provides the `DEFSTRUCT` facility for creating data structures with named components. This makes it easier to manipulate custom data objects as we can refer to their components by name.
 Constructor, access and assignment constructs are automatically defined when a data type is defined through `DEFSTRUCT`. Consider the below example of defining a data type for rectangles.
@@ -983,7 +828,6 @@ Below is an example of the above structure.
 ```
 
 The below creates an instance of RECTANGLE:
-
 ```lisp
 (defvar rectangle-1)
 
@@ -995,62 +839,43 @@ The below creates an instance of RECTANGLE:
 (setf (rectangle-width rectangle-1) 20) ;; sets RECTANGLE-WIDTH of RECTANGLE-1 to 20
 ```
 
-
 <a id="orgab67257"></a>
-
 ## Common Lisp Object System (CLOS)
-
 Below is an example of creating two classes, one which inherits from the other. Courtesy of the [Common Lisp Cookbook](https://lispcookbook.github.io/cl-cookbook/clos.html).
-
 ```lisp
 (defclass person () ;; define a class
  ((name
   :initarg :name
   :accessor name)
  (lisper
-  :initform "Yes"
-  :accessor lisper)))
+  :initform "Yes"	;; default values
+  :accessor lisper)))	;; accessors for both getting and setting
 
 (defvar person-1	;; create an instance
   (make-instance 'person :name "David" )) 
-```
 
-Accessor functions are used for both getting and setting.
-
-```lisp
 (name person-1) ;; DAVID
 (setf (name person-1) "Tom") ;; sets name to Tom
-```
 
-`:INITFORM` is used to set default values. 
-
-```lisp
 (lisper person-1) ;; "Yes" (default), as the value of lisper was not yet set
-```
 
-Inheriting from the PERSON class.
-
-```lisp
-(defclass child (person)
+(defclass child (person) ;; Inheriting from person
   ((can-walk-p
    :initarg :can-walk-p
    :initform "No"
    :accessor can-walk-p)))
-```
-
-Inherited classes inherit the slots of their parents. CHILD will inherit LISPER from PERSON. The below will return "Yes":
-```lisp
+ 
+;: Inherited slots from parents
 (lisper (make-instance 'child :name "Phoebe")) ;; Returns "Yes"
-```
 
-Inherited classes can also introduce new slots. CHILD introduces CAN-WLAK-P. 
-```lisp
+;; child introduces CAN-WALK-P solt
+
 (can-walk-p (make-instance 'child)) ;; Returns "No"
 ```
 
-We can add methods to classes with a combination of `DEFGENERIC` and `DEFMETHOD`. Note that Common Lisp supports multiple dispatch so that many classes can share and use the same method names.
-
-`DEFGENERIC` establishes an entry in the method dispatch table, while `DEFMETHOD` allows us to create specialised versions.
+Common Lisp supports multiple dispatch - many classes can share the same method names.
+`DEFGENERIC` establishes an entry in the method dispatch table,
+`DEFMETHOD` allows us to create specialised versions.
 
 ```lisp
 (defgeneric greet (obj) ;; Version with a default method (to be used if no other specialisations exist:
@@ -1063,7 +888,6 @@ We can add methods to classes with a combination of `DEFGENERIC` and `DEFMETHOD`
 ```
 
 In creating specialised methods, we add the parameter type to the parameter list. In a method call, LISP will then use the method which matches the parameter types of the parameters supplied in the method call.
-
 In the below, GUEST-NAME is a parameter of type PERSON, while MESSAGE is a parameter that is not specialised and can be anything.
 
 ```lisp
@@ -1083,7 +907,6 @@ Finally, it is useful to create custom print output for CLOS objects. This can b
 <a id="orge334e2e"></a>
 # Other
 <a id="org5926aaf"></a>
-
 ## Reading & Writing to Files
 
 `WITH-OPEN-FILE` - macro is used to read and write to files. Below is an example of opening a file and then reading from it. The `NIL` in the below inhibits end of file errors.
@@ -1091,10 +914,8 @@ Finally, it is useful to create custom print output for CLOS objects. This can b
 ```lisp
 (with-open-file (my-stream "/Users/ashokkhanna/test.txt")
   (format t "~a~%" (read-line my-stream nil)))
-```
 
-Below is an example of opening a file and then writing to it.
-```lisp
+;; Opening a file and then writing to it
 (with-open-file (my-stream "/Users/ashokkhanna/test.txt" :direction
 			   :output :if-exists :append)
   (format my-stream "~a~%" "Hello, World!"))
@@ -1115,16 +936,16 @@ The following open arguments can be supplied to the `WITH-OPEN-FILE` macro:
 
 ## Packages
 
-Packages are a central mechanism for avoiding name collisions that occur if multiple files contain variables or functions with the same name. More information on packages can be found on [my guide on Medium](https://ashok-khanna.medium.com/an-introduction-to-lisp-packages-7a9ee352006e).
-
-Packages need to be registered before they can be used. Below is an example of registering a package that inherits from two packages and exports two symbols. This example also shadows two symbols, allowing us to use, within MY-PACKAGE, the definitions of these symbols (RESTART and CONDITION in our case) that exist within the package MY-PACKAGE and not definitions of these symbols inherited from other packages (CL in our case, where RESTART and CONDITION are interned also).
+Packages are a central mechanism for avoiding name collisions that occur if multiple files contain variables or functions with the same name. 
+More information in [my guide on Medium](https://ashok-khanna.medium.com/an-introduction-to-lisp-packages-7a9ee352006e).
+Packages need to be registered before they can be used. 
 
 ```lisp
 (defpackage :my-package
-  (:use :cl :other-package-1)
-  (:export :symbol-1
+  (:use :cl :other-package-1) ;; inherits from two packages
+  (:export :symbol-1	;; exports two symbols
 	   :restart)
-  (:shadow :restart
+  (:shadow :restart	;; shadows two symbols, allowing to use them from py-package instead of CL
 	   :condition))
 ```
 
@@ -1136,12 +957,8 @@ It is good practice to put the above at the top of LISP files so that readers ca
 
 ```lisp
 (in-package :my-package)
-```
 
-We will get an error if we try to inherit from both CL and MY-PACKAGE due to to the clash in symbols RESTART and CONDITION that appear in both packages. To overcome this, we can use `:shading-import-from:`:
-
-```lisp
 (defpackage :my-package-2
-  (:use :cl :my-package)
-  (:shadowing-import-from :my-package :restart))
+  (:use :cl :my-package) 	;; ERROR when inheriting from both: restart and condition appear in both packages
+  (:shadowing-import-from :my-package :restart)) ;; to overcome this
 ```
